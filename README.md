@@ -1,5 +1,11 @@
 # Notes
 - ensure year within `extractor.js` is set to current year
+- head to sutd --> myportal --> weekly schedule
+- ensure (Show Class Title) is on
+- ensure (Show AM/PM) and (Show Instructors) are off
+- refresh calendar
 - use ctrl + shift + j to open browser command line
-- move downloaded `schedule.ics` to same folder
+- paste code in `extractor.js` into command line and wait for it to finish executing
+- move downloaded `schedule.ics` to this folder
+- run `importer.py`
 - login to google using greg250977@gmail.com
