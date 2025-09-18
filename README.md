@@ -1,4 +1,4 @@
-#Notes
+# Notes
 -
 - ensure year within `extractor.js` is set to current year
 - use ctrl + shift + j to open browser command line
