@@ -1,2 +1,4 @@
-selenium==4.35.0
-webdriver_manager==4.0.2
+icalendar
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
