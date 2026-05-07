@@ -1,8 +1,8 @@
 # Notes
 - ensure year within `extractor.js` is set to current year
 - head to sutd --> myportal --> weekly schedule
-- ensure (Show Class Title) is on
-- ensure (Show AM/PM) and (Show Instructors) are off
+- ensure (Show Class Title) and (Show AM/PM) is on
+- ensure (Show Instructors) are off
 - refresh calendar
 - use ctrl + shift + j to open browser command line
 - paste code in `extractor.js` into command line and wait for it to finish executing
