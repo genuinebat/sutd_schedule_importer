@@ -7,5 +7,6 @@
 - use ctrl + shift + j to open browser command line
 - paste code in `extractor.js` into command line and wait for it to finish executing
 - move downloaded `schedule.ics` to this folder
+- create venv run pip install -r requirements.txt
 - run `importer.py`
-- login to google using greg250977@gmail.com
+- login to your google account
