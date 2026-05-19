@@ -1,9 +1,8 @@
 (async function (doc) {
-  var year = 2025;
   let classes = [];
   for (let i = 0; i < 14; i++) {
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
+ 
     const day_from_x = {};
     const days = Array.from(doc.querySelectorAll('#WEEKLY_SCHED_HTMLAREA th'))
       .slice(1)
@@ -14,60 +13,51 @@
         return {
           day: parseInt(day),
           month: MONTHS.indexOf(month) + 1,
-          year: year,
+          year: new Date().getFullYear(),
         };
       });
-
+ 
     const removeExtraSpaces = s => s.split(' ').filter(s => s.length > 0).join(' ');
-
+ 
     const c = Array.from(doc.querySelectorAll('#WEEKLY_SCHED_HTMLAREA td > span'))
       .map(e => e.parentNode)
       .filter(e => day_from_x[Math.round(e.getBoundingClientRect().x)] !== undefined)
       .map(e => {
         const span = e.childNodes[0].childNodes;
         const day = days[day_from_x[Math.round(e.getBoundingClientRect().x)]];
-
+ 
         const formatCode = s => {
           const words = removeExtraSpaces(s).split(' ');
           return words[0] + words.slice(1).join(' ');
         }
-
+ 
         return {
           name: removeExtraSpaces(`${formatCode(span[0].textContent)} ${span[2].textContent} ${span[4].textContent}`),
           day,
-          time: span[6].textContent.split(' - ').map(s => {
-            let match = s.trim().match(/(\d+):(\d+)\s*([a-zA-Z]+)/);
-            if (!match) return s.replace(':', ''); // Fallback
-            let hr = parseInt(match[1]);
-            let min = match[2];
-            let ampm = match[3].toUpperCase();
-            if (ampm === 'PM' && hr < 12) hr += 12;
-            if (ampm === 'AM' && hr === 12) hr = 0;
-            return ('0' + hr).slice(-2) + min; 
-          }),
+          time: span[6].textContent.split(' - ').map(s => s.split(':').join('')),
           place: removeExtraSpaces(span[8].textContent),
         }
       });
-
+ 
     console.log(`Found ${c.length} classes for Week ${i + 1}`);
     classes.push(...c);
-
+ 
     doc.getElementById('DERIVED_CLASS_S_SSR_NEXT_WEEK').click();
     await new Promise(res => setTimeout(res, 2000));
   }
   return classes;
 })(document.getElementById('ptifrmtgtframe').contentDocument).then(classes => {
   const now = new Date();
-
+ 
   const p = (n, l) => ("000" + n).slice(-l);
   const f = (c, i) => `BEGIN:VEVENT
 SUMMARY:${c.name}
 DTSTAMP;TZID=Asia/Singapore:${p(now.getUTCFullYear(), 4)}${p(now.getMonth() + 1, 2)}${p(now.getUTCDate(), 2)}T000000
-DTSTART;TZID=Asia/Singapore:${p(c.day.year, 4)}${p(c.day.month, 2)}${p(c.day.day, 2)}T${c.time[0]}00
-DTEND;TZID=Asia/Singapore:${p(c.day.year, 4)}${p(c.day.month, 2)}${p(c.day.day, 2)}T${c.time[1]}00
+DTSTART;TZID=Asia/Singapore:${p(c.day.year, 4)}${p(c.day.month, 2)}${p(c.day.day, 2)}T${p(c.time[0], 4)}00
+DTEND;TZID=Asia/Singapore:${p(c.day.year, 4)}${p(c.day.month, 2)}${p(c.day.day, 2)}T${p(c.time[1], 4)}00
 LOCATION:${c.place}
 END:VEVENT`;
-
+ 
   const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
@@ -75,7 +65,7 @@ METHOD:PUBLISH
 ${classes.map(f).join('\n')}
 END:VCALENDAR
 `;
-
+ 
   let file = new Blob([icsContent], { type: 'text/calendar' });
   const a = document.createElement("a");
   const url = URL.createObjectURL(file);
