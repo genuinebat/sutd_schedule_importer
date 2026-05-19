@@ -5,6 +5,9 @@
 4. Ensure you are on the first week of the term and that ONLY "Show Class Title" is checked
 5. Click "Refresh Calendar" (important!)
 6. Click the big green button on the top right that says "Import to G-Calendar"
-7. Let script run
+7. Let the script run
 8. A popup window will prompt you login to your desired Google account and allow the script to run
 9. Wait for the importing to finish
+
+## Note
+- i am not stealing your data (maybe)
