@@ -66,15 +66,6 @@ ${classes.map(f).join('\n')}
 END:VCALENDAR
 `;
  
-  let file = new Blob([icsContent], { type: 'text/calendar' });
-  const a = document.createElement("a");
-  const url = URL.createObjectURL(file);
-  a.href = url;
-  a.download = 'schedule.ics';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(function() {
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  }, 0);
+  window.icsData = icsContent;
+  window.icsReady = true;
 });

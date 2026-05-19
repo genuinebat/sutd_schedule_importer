@@ -20,6 +20,16 @@ options = webdriver.ChromeOptions()
 
 options.add_experimental_option("detach", True)
 
+downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+
+prefs = {
+    "download.default_directory": downloads_folder,
+    "download.prompt_for_download": False,
+    "download.directory_upgrade": True,
+    "safebrowsing.enabled": True
+}
+options.add_experimental_option("prefs", prefs)
+
 browser = webdriver.Chrome(service=service, options=options)
 
 URL = "https://myportal.sutd.edu.sg"
@@ -61,22 +71,15 @@ browser.execute_script(js_code)
 
 waited, timeout = 0, 300
 
-ics_file = os.path.join(os.path.expanduser("~"), "Downloads/schedule.ics")
+ics_file = os.path.join(downloads_folder, "schedule.ics")
 
 destination = os.path.join(os.path.dirname(os.path.abspath(__file__)), "schedule.ics")
 
-while not os.path.exists(ics_file):
-    time.sleep(1)
-    waited += 1
+WebDriverWait(browser, 300).until(lambda d: d.execute_script("return window.icsReady === true;"))
 
-    if waited >= timeout:
-        print("TIMEDOUT")
-        exit()
-
-shutil.move(ics_file, destination)
+ics_text = browser.execute_script("return window.icsData;")
 
 browser.quit()
-
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 creds = None
@@ -98,8 +101,7 @@ if not creds or not creds.valid:
 
 service = build("calendar", "v3", credentials=creds)
 
-path = Path("./schedule.ics")
-cal = icalendar.Calendar.from_ical(path.read_bytes())
+cal = icalendar.Calendar.from_ical(ics_text)
 
 for e in cal.events:
     if not e.get("SUMMARY"):
